@@ -202,6 +202,40 @@
       transition: opacity 0.2s;
     }
     .person-item:last-child { border-bottom: none; }
+    
+    /* New Summary Table Styles */
+    .summary-table-container {
+      margin-top: var(--space-6);
+      padding-top: var(--space-6);
+      border-top: 1px solid var(--color-divider);
+      overflow-x: auto;
+    }
+    .summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--text-sm);
+    }
+    .summary-table th, .summary-table td {
+      padding: var(--space-2) var(--space-3);
+      text-align: left;
+      border-bottom: 1px solid var(--color-divider);
+    }
+    .summary-table th {
+      color: var(--color-text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: var(--text-xs);
+      letter-spacing: 0.05em;
+    }
+    .summary-table td { color: var(--color-text); }
+    .summary-table .num-col { text-align: right; font-variant-numeric: tabular-nums; }
+    .summary-table .total-row td {
+      font-weight: 600;
+      border-top: 2px solid var(--color-text);
+      border-bottom: none;
+      background: var(--color-surface-2);
+    }
+
     .person-info { display: flex; align-items: center; gap: var(--space-3); flex: 1; min-width: 0; }
     .person-avatar {
       width: 32px;
@@ -438,6 +472,28 @@
       </div>
       <div class="conf-status" id="confStatus"></div>
     </div>
+
+    <div class="summary-table-container">
+      <p class="card-title">Resumo do Rateio</p>
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th class="num-col">%</th>
+            <th class="num-col">Valor</th>
+          </tr>
+        </thead>
+        <tbody id="summaryTableBody"></tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td>Total</td>
+            <td class="num-col" id="totalPctFooter">100,00%</td>
+            <td class="num-col" id="totalAmountFooter">R$ 0,00</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
     <div class="summary-bar">
       <span class="summary-label" id="summaryText"></span>
       <button class="export-btn" id="exportBtn" aria-label="Exportar como texto">
@@ -546,6 +602,22 @@ function calculate() {
     `;
     list.appendChild(li);
   });
+
+  // Populate Summary Table
+  const tableBody = document.getElementById('summaryTableBody');
+  tableBody.innerHTML = '';
+  results.forEach(p => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.name}</td>
+      <td class="num-col">${p.pct.toFixed(2).replace('.', ',')}%</td>
+      <td class="num-col">R$ ${fmt(p.amount)}</td>
+    `;
+    tableBody.appendChild(tr);
+  });
+  const totalPctSum = results.reduce((acc, p) => acc + p.pct, 0);
+  document.getElementById('totalPctFooter').textContent = totalPctSum.toFixed(2).replace('.', ',') + '%';
+  document.getElementById('totalAmountFooter').textContent = 'R$ ' + fmt(totalPctSum * total / 100);
 
   const active = results.filter(p => p.pct > 0).length;
   document.getElementById('summaryText').textContent = `${active} participantes · R$ ${fmt(total)}`;
