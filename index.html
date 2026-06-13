@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rateio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..600&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --color-bg: #f7f6f2;
+      --color-surface: #f9f8f5;
+      --color-surface-2: #ffffff;
+      --color-border: #d4d1ca;
+      --color-divider: #dcd9d5;
+      --color-text: #28251d;
+      --color-text-muted: #7a7974;
+      --color-text-faint: #bab9b4;
+      --color-primary: #01696f;
+      --color-primary-hover: #0c4e54;
+      --color-primary-highlight: #cedcd8;
+      --color-success: #437a22;
+      --shadow-sm: 0 1px 2px oklch(0.2 0.01 80 / 0.06);
+      --shadow-md: 0 4px 12px oklch(0.2 0.01 80 / 0.08);
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --font-body: 'Inter', sans-serif;
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2.25rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+      --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem;
+      --space-8: 2rem; --space-10: 2.5rem; --space-12: 3rem;
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    [data-theme="dark"] {
+      --color-bg: #171614;
+      --color-surface: #1c1b19;
+      --color-surface-2: #201f1d;
+      --color-border: #393836;
+      --color-divider: #262523;
+      --color-text: #cdccca;
+      --color-text-muted: #797876;
+      --color-text-faint: #5a5957;
+      --color-primary: #4f98a3;
+      --color-primary-hover: #227f8b;
+      --color-primary-highlight: #313b3b;
+      --color-success: #6daa45;
+      --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2);
+      --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme]) {
+        --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d;
+        --color-border: #393836; --color-divider: #262523;
+        --color-text: #cdccca; --color-text-muted: #797876; --color-text-faint: #5a5957;
+        --color-primary: #4f98a3; --color-primary-hover: #227f8b; --color-primary-highlight: #313b3b;
+        --color-success: #6daa45;
+        --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2); --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3);
+      }
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+    body {
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      font-size: var(--text-base);
+      color: var(--color-text);
+      background: var(--color-bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: var(--space-8) var(--space-4);
+    }
+    header {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-8);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: var(--color-text);
+      text-decoration: none;
+    }
+    .logo svg { color: var(--color-primary); }
+    .logo-text {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .theme-btn {
+      background: none;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-2);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+    }
+    .theme-btn:hover { color: var(--color-text); background: var(--color-surface); }
+    main { width: 100%; max-width: 520px; }
+    .card {
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-6);
+    }
+    .card-title {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: var(--space-4);
+    }
+    .input-group { display: flex; gap: var(--space-2); }
+    .input-wrap { position: relative; flex: 1; }
+    .currency-prefix {
+      position: absolute;
+      left: var(--space-3);
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      pointer-events: none;
+      font-weight: 400;
+    }
+    input[type="text"] {
+      width: 100%;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-3) var(--space-3) var(--space-8);
+      font-size: var(--text-base);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+    input[type="text"]:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.15);
+    }
+    input[type="text"]::placeholder { color: var(--color-text-faint); }
+    .btn-primary {
+      background: var(--color-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-5);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background var(--transition), box-shadow var(--transition);
+    }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-primary:active { transform: scale(0.98); }
+    .results { display: none; }
+    .results.visible { display: block; }
+    .total-display {
+      text-align: center;
+      padding: var(--space-4) 0 var(--space-5);
+      border-bottom: 1px solid var(--color-divider);
+      margin-bottom: var(--space-4);
+    }
+    .total-label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: var(--space-1);
+    }
+    .total-value {
+      font-size: var(--text-xl);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+      color: var(--color-text);
+    }
+    .person-list { list-style: none; }
+    .person-item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--color-divider);
+      gap: var(--space-3);
+      transition: opacity 0.2s;
+    }
+    .person-item:last-child { border-bottom: none; }
+    .person-info { display: flex; align-items: center; gap: var(--space-3); flex: 1; min-width: 0; }
+    .person-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--color-primary-highlight);
+      color: var(--color-primary);
+      font-size: var(--text-xs);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .person-name {
+      font-size: var(--text-sm);
+      font-weight: 450;
+      color: var(--color-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .person-pct {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+    }
+    .person-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: var(--space-1);
+      flex-shrink: 0;
+    }
+    .person-amount {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--color-text);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .person-amount.zero { color: var(--color-text-faint); }
+    .person-pix {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      flex-wrap: wrap;
+      margin-top: var(--space-1);
+    }
+    .pix-type {
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--color-primary);
+      background: var(--color-primary-highlight);
+      border-radius: var(--radius-full, 9999px);
+      padding: 0.1em 0.5em;
+      white-space: nowrap;
+    }
+    .pix-key {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      font-variant-numeric: tabular-nums;
+    }
+    .pix-note {
+      font-size: var(--text-xs);
+      color: var(--color-text-faint);
+      font-style: italic;
+    }
+    .pix-empty {
+      font-size: var(--text-xs);
+      color: var(--color-text-faint);
+      font-style: italic;
+    }
+    .copy-btn {
+      background: none;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-1) var(--space-2);
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      cursor: pointer;
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+      flex-shrink: 0;
+    }
+    .copy-btn:hover { background: var(--color-surface); color: var(--color-text); }
+    .copy-btn.copied { color: var(--color-success); border-color: var(--color-success); }
+    .summary-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--color-divider);
+    }
+    .summary-label { font-size: var(--text-xs); color: var(--color-text-muted); }
+    .export-btn {
+      background: none;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      padding: var(--space-2) var(--space-3);
+      font-size: var(--text-xs);
+      font-weight: 500;
+      color: var(--color-text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      transition: all var(--transition);
+    }
+    .export-btn:hover { color: var(--color-text); background: var(--color-surface); }
+    .badge-zero {
+      display: inline-block;
+      background: oklch(from var(--color-text-faint) l c h / 0.15);
+      color: var(--color-text-faint);
+      border-radius: var(--radius-full, 9999px);
+      padding: 0.1em 0.5em;
+      font-size: 0.7rem;
+      font-weight: 500;
+      margin-left: var(--space-1);
+      vertical-align: middle;
+    }
+    .conference-bar {
+      margin-top: var(--space-4);
+      padding: var(--space-4);
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+    }
+    .conf-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-1) 0;
+    }
+    .conf-label {
+      font-size: var(--text-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .conf-sum, .conf-original {
+      font-size: var(--text-sm);
+      font-weight: 500;
+      font-variant-numeric: tabular-nums;
+      color: var(--color-text);
+    }
+    .conf-status {
+      margin-top: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: var(--text-sm);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      display: none;
+    }
+    .conf-status.ok {
+      display: flex;
+      background: oklch(from var(--color-success) l c h / 0.12);
+      color: var(--color-success);
+      border: 1px solid oklch(from var(--color-success) l c h / 0.25);
+    }
+    .conf-status.nok {
+      display: flex;
+      background: oklch(from var(--color-error, #a12c7b) l c h / 0.10);
+      color: #c0392b;
+      border: 1px solid oklch(0.55 0.18 25 / 0.3);
+    }
+    [data-theme="dark"] .conf-status.nok {
+      color: #e07070;
+      background: oklch(0.3 0.08 25 / 0.25);
+      border-color: oklch(0.5 0.15 25 / 0.35);
+    }
+    .conf-status.attention {
+      display: flex;
+      background: oklch(0.92 0.08 80 / 0.5);
+      color: #8a6000;
+      border: 1px solid oklch(0.75 0.12 80 / 0.4);
+    }
+    [data-theme="dark"] .conf-status.attention {
+      background: oklch(0.28 0.06 80 / 0.4);
+      color: #e8c050;
+      border-color: oklch(0.55 0.1 80 / 0.4);
+    }
+    @media (max-width: 480px) {
+      body { padding: var(--space-4) var(--space-3); }
+      .card { padding: var(--space-4); border-radius: var(--radius-lg); }
+      .input-group { flex-direction: column; }
+      .btn-primary { width: 100%; padding: var(--space-3); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-label="Rateio logo">
+      <circle cx="12" cy="12" r="9"/>
+      <path d="M8 12h8M12 8v8"/>
+    </svg>
+    <span class="logo-text">Rateio</span>
+  </div>
+  <button class="theme-btn" data-theme-toggle aria-label="Alternar tema">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+</header>
+
+<main>
+  <div class="card">
+    <p class="card-title">Valor total a ratear</p>
+    <div class="input-group">
+      <div class="input-wrap">
+        <span class="currency-prefix">R$</span>
+        <input type="text" id="valorInput" placeholder="0,00" inputmode="decimal" autocomplete="off" aria-label="Valor total">
+      </div>
+      <button class="btn-primary" id="calcBtn" aria-label="Calcular rateio">Calcular</button>
+    </div>
+  </div>
+
+  <div class="card results" id="results" aria-live="polite">
+    <div class="total-display">
+      <p class="total-label">Total</p>
+      <p class="total-value" id="totalDisplay">R$ 0,00</p>
+    </div>
+    <ul class="person-list" id="personList"></ul>
+    <div class="conference-bar" id="conferenceBar">
+      <div class="conf-row">
+        <span class="conf-label">Soma dos rateios</span>
+        <span class="conf-sum" id="confSum">R$ 0,00</span>
+      </div>
+      <div class="conf-row">
+        <span class="conf-label">Valor informado</span>
+        <span class="conf-original" id="confOriginal">R$ 0,00</span>
+      </div>
+      <div class="conf-status" id="confStatus"></div>
+    </div>
+    <div class="summary-bar">
+      <span class="summary-label" id="summaryText"></span>
+      <button class="export-btn" id="exportBtn" aria-label="Exportar como texto">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar
+      </button>
+    </div>
+  </div>
+</main>
+
+<script>
+(function(){
+  const t = document.querySelector('[data-theme-toggle]');
+  const r = document.documentElement;
+  let d = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+  r.setAttribute('data-theme', d);
+  function updateIcon() {
+    t.innerHTML = d === 'dark'
+      ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  }
+  updateIcon();
+  t.addEventListener('click', () => { d = d === 'dark' ? 'light' : 'dark'; r.setAttribute('data-theme', d); updateIcon(); });
+})();
+
+const PEOPLE = [
+  { name: 'Daniel Hertz',         pct:  9.52, pixType: 'CPF',      pixKey: '003.352.970-13' },
+  { name: 'Daniel Maciel',        pct:  9.52, pixType: 'E-mail',    pixKey: 'dimethas@yahoo.com.br' },
+  { name: 'Eduardo Tende',        pct:  9.52, pixType: 'Celular',   pixKey: '51-9.9773-8681' },
+  { name: 'Fabiano Pezzi',        pct:  9.52, pixType: 'CPF',      pixKey: '960.946.990-68' },
+  { name: 'Uilson Pimentel',      pct:  9.52, pixType: 'CPF',      pixKey: '685.063.680-49', pixNote: 'Pix para esposa (Deisi)' },
+  { name: 'Maurício Niederauer',  pct:  9.52, pixType: 'Celular',   pixKey: '54-9.8135-6519' },
+  { name: 'Paulo Scopel',         pct:  9.52, pixType: 'CPF',      pixKey: '525.886.610-68' },
+  { name: 'Eduardo Basotti',      pct:  9.52, pixType: 'Celular',   pixKey: '54-9.9933-8758' },
+  { name: 'Robson Colombo',       pct:  9.52, pixType: 'Celular',   pixKey: '54-9.9142-4630' },
+  { name: 'Mauricio Fonseca',     pct:  4.77, pixType: 'Celular',   pixKey: '54-9.9938-0585' },
+  { name: 'Alvaro Ruschel',       pct:  4.77, pixType: 'Celular',   pixKey: '54-9.9672-7355' },
+  { name: 'Juliano Bergamini',    pct:  2.39, pixType: 'E-mail',    pixKey: 'bergamini-bg@hotmail.com' },
+  { name: 'Fernanda Abarzua',     pct:  2.39, pixType: 'CPF',      pixKey: '025.263.450-06' },
+];
+
+function initials(name) {
+  const parts = name.trim().split(' ');
+  if (parts.length === 1) return parts[0][0].toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+}
+
+function fmt(val) {
+  return val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function normalizePixForCopy(type, key) {
+  if (!key) return '';
+  const t = (type || '').toLowerCase();
+  if (t === 'cpf' || t === 'cnpj' || t === 'celular' || t === 'telefone') {
+    return key.replace(/\D/g, '');
+  }
+  return key.trim();
+}
+
+function parseInput(str) {
+  const clean = str.replace(/\s/g, '').replace(/\./g, '').replace(',', '.');
+  const num = parseFloat(clean);
+  return isNaN(num) ? null : num;
+}
+
+function calculate() {
+  const raw = document.getElementById('valorInput').value;
+  const total = parseInput(raw);
+  if (!total || total <= 0) {
+    document.getElementById('valorInput').focus();
+    return;
+  }
+
+  const results = PEOPLE.map(p => ({
+    ...p,
+    amount: (total * p.pct) / 100
+  }));
+
+  document.getElementById('totalDisplay').textContent = 'R$ ' + fmt(total);
+
+  const list = document.getElementById('personList');
+  list.innerHTML = '';
+  results.forEach(p => {
+    const li = document.createElement('li');
+    li.className = 'person-item';
+    const isZero = p.pct === 0;
+    const pixInfo = p.pixKey
+      ? `<div class="person-pix"><span class="pix-type">${p.pixType}</span><span class="pix-key">${p.pixKey}</span>${p.pixNote ? `<span class="pix-note">${p.pixNote}</span>` : ''}</div>`
+      : `<div class="person-pix pix-empty">Chave Pix não informada</div>`;
+    const copyPixVal = p.pixKey ? normalizePixForCopy(p.pixType, p.pixKey) : '';
+    li.innerHTML = `
+      <div class="person-info">
+        <div class="person-avatar">${initials(p.name)}</div>
+        <div>
+          <div class="person-name">${p.name}${isZero ? '<span class="badge-zero">isento</span>' : ''}</div>
+          <div class="person-pct">${p.pct.toFixed(2).replace('.', ',')}%</div>
+          ${pixInfo}
+        </div>
+      </div>
+      <div class="person-right">
+        <span class="person-amount${isZero ? ' zero' : ''}">R$ ${fmt(p.amount)}</span>
+        <button class="copy-btn" data-copy="${fmt(p.amount)}" aria-label="Copiar valor de ${p.name}">copiar</button>
+        ${p.pixKey ? `<button class="copy-btn copy-pix" data-copy="${copyPixVal}" aria-label="Copiar chave Pix de ${p.name}">pix</button>` : ''}
+      </div>
+    `;
+    list.appendChild(li);
+  });
+
+  const active = results.filter(p => p.pct > 0).length;
+  document.getElementById('summaryText').textContent = `${active} participantes · R$ ${fmt(total)}`;
+
+  // Conference check
+  const sumRateio = results.reduce((acc, p) => acc + p.amount, 0);
+  const diff = Math.abs(total - sumRateio);
+  document.getElementById('confSum').textContent = 'R$ ' + fmt(sumRateio);
+  document.getElementById('confOriginal').textContent = 'R$ ' + fmt(total);
+  const statusEl = document.getElementById('confStatus');
+  if (diff <= 1 && sumRateio <= total) {
+    statusEl.className = 'conf-status ok';
+    statusEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Conferência OK — diferença de R$ ' + fmt(diff);
+  } else if (diff <= 1 && sumRateio > total) {
+    statusEl.className = 'conf-status attention';
+    statusEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Conferência merece atenção — soma maior por R$ ' + fmt(diff);
+  } else if (sumRateio < total) {
+    statusEl.className = 'conf-status attention';
+    statusEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg> Conferência merece atenção — soma menor por R$ ' + fmt(diff);
+  } else {
+    statusEl.className = 'conf-status nok';
+    statusEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Conferência não OK — diferença de R$ ' + fmt(diff);
+  }
+
+  const resultsEl = document.getElementById('results');
+  resultsEl.classList.add('visible');
+  resultsEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+  // copy buttons
+  list.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = btn.getAttribute('data-copy');
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = '✓';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'copiar'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+  });
+}
+
+// export
+document.getElementById('exportBtn').addEventListener('click', () => {
+  const raw = document.getElementById('valorInput').value;
+  const total = parseInput(raw);
+  if (!total) return;
+  const lines = ['Rateio — R$ ' + fmt(total), ''];
+  PEOPLE.forEach(p => {
+    const amount = (total * p.pct) / 100;
+    lines.push(`${p.name}: R$ ${fmt(amount)} (${p.pct.toFixed(2).replace('.', ',')}%)`);
+  });
+  const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'rateio.txt';
+  a.click();
+});
+
+document.getElementById('calcBtn').addEventListener('click', calculate);
+document.getElementById('valorInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') calculate();
+});
+// auto-format on blur
+document.getElementById('valorInput').addEventListener('blur', function() {
+  const val = parseInput(this.value);
+  if (val !== null && val > 0) this.value = fmt(val);
+});
+</script>
+</body>
+</html>
